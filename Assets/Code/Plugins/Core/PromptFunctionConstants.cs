@@ -18,7 +18,7 @@ BEGIN SUMMARY:
 ";
 
         internal const string GetConversationActionItemsDefinition =
-            @"You are an action item extractor. You will be given chat history and need to make note of action items mentioned in the chat.
+            @"You are an action item extractor. You will be given chatHistory history and need to make note of action items mentioned in the chatHistory.
 Extract action items from the content if there are any. If there are no action, return nothing. If a single field is missing, use an empty string.
 Return the action items in json.
 

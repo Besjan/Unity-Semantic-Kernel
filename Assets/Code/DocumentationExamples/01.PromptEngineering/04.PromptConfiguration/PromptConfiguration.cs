@@ -3,12 +3,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Plugins.Core;
-using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 using UnityEngine;
 
 /// <summary>
@@ -22,23 +20,23 @@ public class PromptConfiguration : MonoBehaviour
 	KernelFunction chat;
 	ChatHistory history;
 
-	List<string> choices;
-	List<ChatHistory> fewShotExamples;
-	KernelFunction getIntent;
-
 	private void Awake()
 	{
 		chatUI.OnMessageSent.AddListener((string message) => UserRequest(message));
 
+		var endpoint = "http://localhost:1234/v1/chat/completions";
+		var client = new HttpClient(new LocalLLMs(endpoint));
+
 		var kernelBuilder = Kernel.CreateBuilder()
-			.AddOpenAIChatCompletion(modelId: "_", apiKey: "_", httpClient: new HttpClient(new LMStudio()));
+			//.AddOpenAIChatCompletion(modelId: "_", apiKey: "_", httpClient: new HttpClient(new LMStudio()));
+			.AddAzureOpenAIChatCompletion(deploymentName: "local-model", endpoint: endpoint, apiKey: "Is not required", httpClient: client);
 
 		kernelBuilder.Plugins.AddFromType<ConversationSummaryPlugin>();
 
 		kernel = kernelBuilder.Build();
 
-		// Create a template for chat with settings
-		var chat = kernel.CreateFunctionFromPrompt(
+		// Create a template for chatHistory with settings
+		chat = kernel.CreateFunctionFromPrompt(
 			new PromptTemplateConfig()
 			{
 				Name = "Chat",
@@ -61,99 +59,21 @@ public class PromptConfiguration : MonoBehaviour
 							MaxTokens = 1000,
 							Temperature = 0
 						}
-					},
-					{
-						"gpt-3.5-turbo", new OpenAIPromptExecutionSettings()
-						{
-							ModelId = "gpt-3.5-turbo-0613",
-							MaxTokens = 4000,
-							Temperature = 0.2
-						}
-					},
-					{
-						"gpt-4",
-						new OpenAIPromptExecutionSettings()
-						{
-							ModelId = "gpt-4-1106-preview",
-							MaxTokens = 8000,
-							Temperature = 0.3
-						}
 					}
 				}
 			}
 		);
 
-		// Create choices
-		choices = new() { "ContinueConversation", "EndConversation" };
-
-		// Create few-shot examples
-		fewShotExamples = new List<ChatHistory> {
-				new ChatHistory()
-			{
-				new ChatMessageContent(AuthorRole.User, "Can you send a very quick approval to the marketing team?"),
-				new ChatMessageContent(AuthorRole.System, "Intent:"),
-				new ChatMessageContent(AuthorRole.Assistant, "ContinueConversation")
-			},
-			new ChatHistory()
-			{
-				new ChatMessageContent(AuthorRole.User, "Thanks, I'm done for now"),
-				new ChatMessageContent(AuthorRole.System, "Intent:"),
-				new ChatMessageContent(AuthorRole.Assistant, "EndConversation")
-			}};
-
-		// Create handlebars template for intent
-		getIntent = kernel.CreateFunctionFromPrompt(
-			new()
-			{
-				Template = @"
-<message role=""system"">Instructions: What is the intent of this request?
-Do not explain the reasoning, just reply back with the intent. If you are unsure, reply with {{choices[0]}}.
-Choices: {{choices}}.</message>
-
-{{#each fewShotExamples}}
-    {{#each this}}
-        <message role=""{{role}}"">{{content}}</message>
-    {{/each}}
-{{/each}}
-
-{{ConversationSummaryPlugin-SummarizeConversation history}}
-
-<message role=""user"">{{request}}</message>
-<message role=""system"">Intent:</message>",
-				TemplateFormat = "handlebars"
-			},
-			new HandlebarsPromptTemplateFactory()
-		);
-
-		history = new();
+		ChatHistory history = new ChatHistory();
 	}
 
 	public async void UserRequest(string request)
 	{
-		// Create assistant chat entry
+		// Create assistant chatHistory entry
 		chatUI.Container.AddMessage(new Message(chatUI.Members[1], string.Empty));
 		var message = chatUI.Container.ContainerObject.GetComponentsInChildren<MessagePresenter>().Last().Content;
 
-		// Invoke prompt
-		var intent = await kernel.InvokeAsync(
-			getIntent,
-			new()
-			{
-					{ "request", request },
-					{ "choices", choices },
-					{ "history", history },
-					{ "fewShotExamples", fewShotExamples }
-			}
-		);
-
-		if (intent.ToString() == "EndConversation")
-		{
-			message.text = "Glad to help!";
-			await Task.Delay(3000);
-			Application.Quit();
-		}
-
-		// Get chat response
+		// Get chatHistory response
 		var response = kernel.InvokeStreamingAsync<StreamingChatMessageContent>(
 			chat,
 			new()

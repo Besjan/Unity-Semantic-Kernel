@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SemanticKernel.Yaml</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SemanticKernel.KernelFunctionYaml">
+            <summary>
+            Factory methods for creating <seealso cref="T:Microsoft.SemanticKernel.KernelFunction"/> instances.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.KernelFunctionYaml.FromPromptYaml(System.String,Microsoft.SemanticKernel.IPromptTemplateFactory,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Creates a <see cref="T:Microsoft.SemanticKernel.KernelFunction"/> instance for a prompt function using the specified markdown text.
+            </summary>
+            <param name="text">YAML representation of the <see cref="T:Microsoft.SemanticKernel.PromptTemplateConfig"/> to use to create the prompt function.</param>
+            <param name="promptTemplateFactory">
+            The <see cref="T:Microsoft.SemanticKernel.IPromptTemplateFactory"/> to use when interpreting the prompt template configuration into a <see cref="T:Microsoft.SemanticKernel.IPromptTemplate"/>.
+            If null, a default factory will be used.
+            </param>
+            <param name="loggerFactory">The <see cref="T:Microsoft.Extensions.Logging.ILoggerFactory"/> to use for logging. If null, no logging will be performed.</param>
+            <returns>The created <see cref="T:Microsoft.SemanticKernel.KernelFunction"/>.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.KernelFunctionYaml.ToPromptTemplateConfig(System.String)">
+            <summary>
+            Convert the given YAML text to a <see cref="T:Microsoft.SemanticKernel.PromptTemplateConfig"/> model.
+            </summary>
+            <param name="text">YAML representation of the <see cref="T:Microsoft.SemanticKernel.PromptTemplateConfig"/> to use to create the prompt function.</param>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.PromptExecutionSettingsNodeDeserializer">
+            <summary>
+            Deserializer for <see cref="T:Microsoft.SemanticKernel.PromptExecutionSettings"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptExecutionSettingsNodeDeserializer.Deserialize(YamlDotNet.Core.IParser,System.Type,System.Func{YamlDotNet.Core.IParser,System.Type,System.Object},System.Object@)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.PromptYamlKernelExtensions">
+            <summary>
+            Class for extensions methods to define functions using prompt YAML format.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptYamlKernelExtensions.CreateFunctionFromPromptYaml(Microsoft.SemanticKernel.Kernel,System.String,Microsoft.SemanticKernel.IPromptTemplateFactory)">
+            <summary>
+            Creates a <see cref="T:Microsoft.SemanticKernel.KernelFunction"/> instance for a prompt function using the specified YAML.
+            </summary>
+            <param name="kernel">The <see cref="T:Microsoft.SemanticKernel.Kernel"/> containing services, plugins, and other state for use throughout the operation.</param>
+            <param name="text">YAML representation of the <see cref="T:Microsoft.SemanticKernel.PromptTemplateConfig"/> to use to create the prompt function</param>
+            <param name="promptTemplateFactory">
+            The <see cref="T:Microsoft.SemanticKernel.IPromptTemplateFactory"/> to use when interpreting the prompt template configuration into a <see cref="T:Microsoft.SemanticKernel.IPromptTemplate"/>.
+            If null, a default factory will be used.
+            </param>
+            <returns>The created <see cref="T:Microsoft.SemanticKernel.KernelFunction"/>.</returns>
+        </member>
+    </members>
+</doc>

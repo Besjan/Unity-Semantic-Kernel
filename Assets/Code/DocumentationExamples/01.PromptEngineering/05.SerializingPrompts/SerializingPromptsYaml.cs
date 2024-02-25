@@ -1,42 +1,54 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Plugins.Core;
 using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 using UnityEngine;
 
 /// <summary>
-/// https://learn.microsoft.com/semantic-kernel/prompts/templatizing-prompts
+/// https://learn.microsoft.com/en-us/semantic-kernel/prompts/saving-prompts-as-files?tabs=Csharp
 /// </summary>
-public class Templates : MonoBehaviour
+public class SerializingPromptsYaml : MonoBehaviour
 {
 	[SerializeField] Chat chatUI;
 
-	private Kernel kernel;
-	KernelFunction chat;
+	Kernel kernel;
+	KernelPlugin prompts;
 	ChatHistory history;
 
 	List<string> choices;
 	List<ChatHistory> fewShotExamples;
 	KernelFunction getIntent;
 
-	private void Awake()
+	private async void Awake()
 	{
-		chatUI.OnMessageSent.AddListener(async (string message) => await UserRequest(message));
+		chatUI.OnMessageSent.AddListener((string message) => UserRequest(message));
 
-		kernel = Kernel.CreateBuilder()
-			.AddOpenAIChatCompletion(modelId: "_", apiKey: "_", httpClient: new HttpClient(new LMStudio()))
-			.Build();
+		var kernelBuilder = Kernel.CreateBuilder()
+			.AddOpenAIChatCompletion(modelId: "_", apiKey: "_", httpClient: new HttpClient(new LMStudio()));
 
-		// Create a Semantic Kernel template for chatHistory
-		chat = kernel.CreateFunctionFromPrompt(
-			@"{{$history}}
-            User: {{$request}}
-            Assistant: ");
+		kernelBuilder.Plugins.AddFromType<ConversationSummaryPlugin>();
+
+		kernel = kernelBuilder.Build();
+
+		// Load prompts
+		prompts = kernel.CreatePluginFromPromptDirectory(Path.Combine(Application.streamingAssetsPath, "Prompts"));
+		// Load prompt from YAML
+
+		using StreamReader reader = new(Path.Combine(Application.streamingAssetsPath, "Prompts", "chatYaml", "prompt.yaml"));
+		getIntent = kernel.CreateFunctionFromPromptYaml(
+			await reader.ReadToEndAsync(),
+			promptTemplateFactory: new HandlebarsPromptTemplateFactory()
+		);
+
+		// Create a template for chatHistory with settings
+		history = new ChatHistory();
 
 		// Create choices
 		choices = new() { "ContinueConversation", "EndConversation" };
@@ -55,37 +67,9 @@ public class Templates : MonoBehaviour
 				new ChatMessageContent(AuthorRole.System, "Intent:"),
 				new ChatMessageContent(AuthorRole.Assistant, "EndConversation")
 			}};
-
-		// Create handlebars template for intent
-		getIntent = kernel.CreateFunctionFromPrompt(
-			new()
-			{
-				Template = @"
-<message role=""system"">Instructions: What is the intent of this request?
-Do not explain the reasoning, just reply back with the intent. If you are unsure, reply with {{choices[0]}}.
-Choices: {{choices}}.</message>
-
-{{#each fewShotExamples}}
-    {{#each this}}
-        <message role=""{{role}}"">{{content}}</message>
-    {{/each}}
-{{/each}}
-
-{{#each chatHistory}}
-    <message role=""{{role}}"">{{content}}</message>
-{{/each}}
-
-<message role=""user"">{{request}}</message>
-<message role=""system"">Intent:</message>",
-				TemplateFormat = "handlebars"
-			},
-			new HandlebarsPromptTemplateFactory()
-		);
-
-		history = new();
 	}
 
-	public async Task UserRequest(string request)
+	public async void UserRequest(string request)
 	{
 		// Create assistant chatHistory entry
 		chatUI.Container.AddMessage(new Message(chatUI.Members[1], string.Empty));
@@ -96,10 +80,10 @@ Choices: {{choices}}.</message>
 			getIntent,
 			new()
 			{
-					{ "request", request },
-					{ "choices", choices },
-					{ "history", history },
-					{ "fewShotExamples", fewShotExamples }
+				{ "request", request },
+				{ "choices", choices },
+				{ "history", history },
+				{ "fewShotExamples", fewShotExamples }
 			}
 		);
 
@@ -112,7 +96,7 @@ Choices: {{choices}}.</message>
 
 		// Get chatHistory response
 		var response = kernel.InvokeStreamingAsync<StreamingChatMessageContent>(
-			chat,
+			prompts["chat"],
 			new()
 			{
 					{ "request", request },

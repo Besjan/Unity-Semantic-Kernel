@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: c863680928e336e4c94b250030b7e402, type: 2}
+  m_LightingDataAsset: {fileID: 0}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -460,7 +460,7 @@ GameObject:
   - component: {fileID: 1372228353}
   - component: {fileID: 1372228354}
   m_Layer: 0
-  m_Name: PromptConfiguration
+  m_Name: SerializingPrompts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -490,7 +490,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1372228351}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42cfa2cb4dd6f8b41be877eefd3c1060, type: 3}
+  m_Script: {fileID: 11500000, guid: c797b420cd890714387fd64a9ab5c57c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   chatUI: {fileID: 1150675774}

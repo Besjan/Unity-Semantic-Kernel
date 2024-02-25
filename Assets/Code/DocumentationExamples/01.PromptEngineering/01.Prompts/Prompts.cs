@@ -17,8 +17,12 @@ public class Prompts : MonoBehaviour
 
 	private void Awake()
 	{
+		var endpoint = "http://localhost:1234/v1/chat/completions";
+		var client = new HttpClient(new LocalLLMs(endpoint));
+
 		kernel = Kernel.CreateBuilder()
-			.AddOpenAIChatCompletion(modelId: "_", apiKey: "_", httpClient: new HttpClient(new LMStudio()))
+			.AddAzureOpenAIChatCompletion(deploymentName: "local-model", endpoint: endpoint, apiKey: "Is not required", httpClient: client)
+			//.AddOpenAIChatCompletion(modelId: "_", apiKey: "_", httpClient: new HttpClient(new LMStudio()))
 			.Build();
 
 		_ = RunAsync();
@@ -31,7 +35,7 @@ public class Prompts : MonoBehaviour
 		// 0.0 Initial prompt
 		//////////////////////////////////////////////////////////////////////////////////
 		string request = "I want to send an email to the marketing team celebrating their recent milestone.";
-		log.text  = request;
+		log.text = request;
 		string prompt = $"What is the intent of this request? {request}";
 		log.text += "\n\n" + prompt;
 
@@ -167,7 +171,7 @@ Intent: ";
 		log.text += "\n\n" + "5.0 Provide context to the AI";
 		log.text += "\n\n" + await kernel.InvokePromptAsync(prompt);
 
-		// 6.0 Using message roles in chat completion prompts
+		// 6.0 Using message roles in chatHistory completion prompts
 		//////////////////////////////////////////////////////////////////////////////////
 		// <RolePrompt>
 		history = @"<message role=""user"">I hate sending emails, no one ever reads them.</message>
@@ -190,7 +194,7 @@ Choices: SendEmail, SendMessage, CompleteTask, CreateDocument, Unknown.</message
 <message role=""system"">Intent:</message>";
 		// </RolePrompt>
 
-		log.text += "\n\n" + "6.0 Using message roles in chat completion prompts";
+		log.text += "\n\n" + "6.0 Using message roles in chatHistory completion prompts";
 		log.text += "\n\n" + await kernel.InvokePromptAsync(prompt);
 
 		// 7.0 Give your AI words of encouragement

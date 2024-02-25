@@ -36,7 +36,7 @@ public class FunctionsWithinPrompts: MonoBehaviour
 
 		kernel = kernelBuilder.Build();
 
-		// Create a Semantic Kernel template for chat
+		// Create a Semantic Kernel template for chatHistory
 		chat = kernel.CreateFunctionFromPrompt(
 			@"{{ConversationSummaryPlugin.SummarizeConversation $history}}
 			User: {{$request}}
@@ -90,7 +90,7 @@ Choices: {{choices}}.</message>
 
 	public async void UserRequest(string request)
 	{
-		// Create assistant chat entry
+		// Create assistant chatHistory entry
 		chatUI.Container.AddMessage(new Message(chatUI.Members[1], string.Empty));
 		var message = chatUI.Container.ContainerObject.GetComponentsInChildren<MessagePresenter>().Last().Content;
 
@@ -99,10 +99,10 @@ Choices: {{choices}}.</message>
 			getIntent,
 			new()
 			{
-					{ "request", request },
-					{ "choices", choices },
-					{ "history", history },
-					{ "fewShotExamples", fewShotExamples }
+				{ "request", request },
+				{ "choices", choices },
+				{ "history", history },
+				{ "fewShotExamples", fewShotExamples }
 			}
 		);
 
@@ -113,7 +113,7 @@ Choices: {{choices}}.</message>
 			Application.Quit();
 		}
 
-		// Get chat response
+		// Get chatHistory response
 		var response = kernel.InvokeStreamingAsync<StreamingChatMessageContent>(
 			chat,
 			new()
