@@ -1,2 +1,2 @@
-# Learn Semantic Kernel
-Implement and learn Semantic Kernel in Unity
+# Unity Semantic Kernel
+Learn and Use Semantic Kernel in Unity
