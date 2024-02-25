@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.KernelMemory.Abstractions</id>
+    <version>0.29.240219.3+b8c05ca</version>
+    <authors>Microsoft</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>icon.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/microsoft/kernel-memory</projectUrl>
+    <description>Kernel Memory is a Copilot/Semantic Kernel Plugin and Memory Web Service to index and query any data and documents, using LLM and natural language, tracking sources and showing citations. The package contains the interfaces and models shared by all Kernel Memory packages.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>Copilot, Plugin, Memory, RAG, Kernel Memory, Semantic Memory, Semantic Kernel, Episodic Memory, Declarative Memory, AI, Artificial Intelligence, Embeddings, Vector DB, Vector Search, Memory DB, ETL</tags>
+    <repository type="git" url="https://github.com/microsoft/kernel-memory" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Microsoft.Bcl.AsyncInterfaces" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.Json" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Hosting" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging.Abstractions" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.SemanticKernel.Abstractions" version="1.4.0" exclude="Build,Analyzers" />
+        <dependency id="System.Memory.Data" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Numerics.Tensors" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Json" version="8.0.2" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

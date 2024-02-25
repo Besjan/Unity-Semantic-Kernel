@@ -1,0 +1,737 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SemanticKernel.PromptTemplates.Handlebars</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SemanticKernel.HandlebarsKernelExtensions">
+            <summary>
+            Provides <see cref="T:Microsoft.SemanticKernel.Kernel"/> extensions methods for Handlebars functionality.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.HandlebarsKernelExtensions.InvokeHandlebarsPromptAsync(Microsoft.SemanticKernel.Kernel,System.String,Microsoft.SemanticKernel.KernelArguments,System.Threading.CancellationToken)">
+            <summary>
+            Invokes a prompt specified via a prompt template in the Handlebars prompt template format.
+            </summary>
+            <param name="kernel">The <see cref="T:Microsoft.SemanticKernel.Kernel"/> containing services, plugins, and other state for use throughout the operation.</param>
+            <param name="promptTemplate">Prompt template for the function, using Handlebars prompt template language</param>
+            <param name="arguments">The arguments to pass to the function's invocation, including any <see cref="T:Microsoft.SemanticKernel.PromptExecutionSettings"/>.</param>
+            <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken"/> to monitor for cancellation requests. The default is <see cref="P:System.Threading.CancellationToken.None"/>.</param>
+            <returns>The result of the function's execution.</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplate">
+            <summary>
+            Represents a Handlebars prompt template.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplate._options">
+            <summary>
+            Default options for built-in Handlebars helpers.
+            </summary>
+            TODO [@teresaqhoang]: Support override of default options
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplate.#ctor(Microsoft.SemanticKernel.PromptTemplateConfig,Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateOptions)">
+            <summary>
+            Constructor for Handlebars PromptTemplate.
+            </summary>
+            <param name="promptConfig">Prompt template configuration</param>
+            <param name="options">Handlebars prompt template options</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplate.RenderAsync(Microsoft.SemanticKernel.Kernel,Microsoft.SemanticKernel.KernelArguments,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplate.RegisterHelpers(HandlebarsDotNet.IHandlebars,Microsoft.SemanticKernel.Kernel,Microsoft.SemanticKernel.KernelArguments,System.Threading.CancellationToken)">
+            <summary>
+            Registers kernel, system, and any custom helpers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplate.GetVariables(Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Gets the variables for the prompt template, including setting any default values from the prompt config.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateFactory">
+            <summary>
+            Provides an <see cref="T:Microsoft.SemanticKernel.IPromptTemplateFactory"/> for the handlebars prompt template format.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateFactory.HandlebarsTemplateFormat">
+            <summary>Gets the name of the Handlebars template format.</summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateFactory._options">
+            <summary>
+            Default options for built-in Handlebars helpers.
+            </summary>
+            TODO [@teresaqhoang]: Support override of default options
+        </member>
+        <member name="P:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateFactory.NameDelimiter">
+            <summary>
+            The character used to delimit plugin, function, or variable names in a Handlebars template.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateFactory.#ctor(Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateFactory"/> class.
+            </summary>
+            <param name="options">Handlebars promnpt template options</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateFactory.TryCreate(Microsoft.SemanticKernel.PromptTemplateConfig,Microsoft.SemanticKernel.IPromptTemplate@)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateOptions">
+            <summary>
+            Configuration for Handlebars helpers.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateOptions.RegisterHelperCallback">
+            <summary>
+            Delegate for registering custom Handlebars helpers with conflict resolution.
+            </summary>
+            <param name="name">The name of the helper.</param>
+            <param name="helper">The helper to register.</param>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateOptions.RegisterCustomHelpers">
+            <summary>
+            Callback for registering custom helpers.
+            </summary>
+            <remarks>
+            This callback allows users to register their custom helpers while ensuring
+            that they don't conflict with existing system or custom helpers. Users should
+            use the provided `registerHelper` callback when registering their custom helpers.
+            </remarks>
+            <example>
+            <code>
+            HandlebarsPromptTemplateOptions.RegisterCustomHelpers = (RegisterHelperCallback registerHelper, HandlebarsPromptTemplateOptions options, KernelArguments variables) =>
+            {
+                registerHelper("customHelper", (Context context, Arguments arguments) =>
+                {
+                    // Custom helper logic
+                });
+            };
+            </code>
+            </example>
+            <value>
+            The callback takes three parameters:
+            1. A callback representing the `RegisterHelperSafe` method to register new helpers with built-in conflict handling.
+            2. A <see cref="T:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateOptions"/> representing the configuration for helpers.
+            3. A <see cref="T:Microsoft.SemanticKernel.KernelArguments"/> instance containing variables maintained by the Handlebars context.
+            </value>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateOptions.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateOptions"/> class.
+            </summary>
+            <remarks>Categories only filters built-in dotnet helpers, the ones defined here: https://github.com/Handlebars-Net/Handlebars.Net.Helpers/wiki.</remarks>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelFunctionHelpers">
+            <summary>
+            Utility class for registering kernel functions as helpers in Handlebars.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelFunctionHelpers.Register(HandlebarsDotNet.IHandlebars,Microsoft.SemanticKernel.Kernel,Microsoft.SemanticKernel.KernelArguments,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Register all (default) or specific categories.
+            </summary>
+            <param name="handlebarsInstance">The <see cref="T:HandlebarsDotNet.IHandlebars"/>-context.</param>
+            <param name="kernel">Kernel instance.</param>
+            <param name="executionContext">Kernel arguments maintained as the executing context.</param>
+            <param name="nameDelimiter">The character used to delimit the plugin name and function name in a Handlebars template.</param>
+            <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken"/> to monitor for cancellation requests. The default is <see cref="P:System.Threading.CancellationToken.None"/>.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelFunctionHelpers.IsExpectedParameterType(Microsoft.SemanticKernel.KernelParameterMetadata,System.Object)">
+            <summary>
+            Checks if handlebars argument is a valid type for the function parameter.
+            Must satisfy one of the following:
+            Types are an exact match.
+            Argument is any kind of numeric type if function parameter requires a numeric type.
+            Argument type is an object (this covers complex types).
+            Function parameter is a generic type.
+            </summary>
+            <param name="parameterMetadata">Function parameter metadata.</param>
+            <param name="argument">Handlebar argument.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelFunctionHelpers.ProcessHashArguments(Microsoft.SemanticKernel.KernelFunctionMetadata,Microsoft.SemanticKernel.KernelArguments,System.Collections.Generic.IDictionary{System.String,System.Object},System.String)">
+            <summary>
+            Processes the hash arguments passed to a Handlebars helper function.
+            </summary>
+            <param name="functionMetadata">Metadata for the function being invoked.</param>
+            <param name="executionContext">Arguments maintained in the executing context.</param>
+            <param name="handlebarsArguments">Arguments passed to the Handlebars helper.</param>
+            <param name="nameDelimiter">The character used to delimit the plugin name and function name in a Handlebars template.</param>
+            <exception cref="T:Microsoft.SemanticKernel.KernelException">Thrown when a required parameter is missing.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelFunctionHelpers.ProcessPositionalArguments(Microsoft.SemanticKernel.KernelFunctionMetadata,Microsoft.SemanticKernel.KernelArguments,HandlebarsDotNet.Arguments)">
+            <summary>
+            Processes the positional arguments passed to a Handlebars helper function.
+            </summary>
+            <param name="functionMetadata">KernelFunctionMetadata for the function being invoked.</param>
+            <param name="executionContext">Arguments maintained in the executing context.</param>
+            <param name="handlebarsArguments">Arguments passed to the Handlebars helper.</param>
+            <exception cref="T:Microsoft.SemanticKernel.KernelException">Thrown when a required parameter is missing.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelFunctionHelpers.InvokeKernelFunction(Microsoft.SemanticKernel.Kernel,Microsoft.SemanticKernel.KernelFunction,Microsoft.SemanticKernel.KernelArguments,System.Threading.CancellationToken)">
+            <summary>
+            Invokes an SK function and returns a typed result, if specified.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelFunctionHelpers.ParseResult(Microsoft.SemanticKernel.FunctionResult)">
+            <summary>
+            Parse the <see cref="T:Microsoft.SemanticKernel.FunctionResult"/> into an object, extracting wrapped content as necessary.
+            </summary>
+            <param name="result">Function result.</param>
+            <returns>Deserialized object</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelSystemHelpers">
+            <summary>
+            Extension class to register additional helpers as Kernel System helpers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelSystemHelpers.Register(HandlebarsDotNet.IHandlebars,Microsoft.SemanticKernel.Kernel,Microsoft.SemanticKernel.KernelArguments,Microsoft.SemanticKernel.PromptTemplates.Handlebars.HandlebarsPromptTemplateOptions)">
+            <summary>
+            Register all (default) or specific categories of system helpers.
+            </summary>
+            <param name="handlebarsInstance">The <see cref="T:HandlebarsDotNet.IHandlebars"/>-instance.</param>
+            <param name="kernel">Kernel instance.</param>
+            <param name="variables">Dictionary of variables maintained by the Handlebars context.</param>
+            <param name="options">Handlebars prompt template options.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelSystemHelpers.RegisterSystemHelpers(HandlebarsDotNet.IHandlebars,Microsoft.SemanticKernel.Kernel,Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Register all system helpers.
+            </summary>
+            <param name="handlebarsInstance">The <see cref="T:HandlebarsDotNet.IHandlebars"/>-instance.</param>
+            <param name="kernel">Kernel instance.</param>
+            <param name="variables">Dictionary of variables maintained by the Handlebars context.</param>
+            <exception cref="T:Microsoft.SemanticKernel.KernelException">Exception thrown when a message does not contain a defining role.</exception>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelHelpersUtils">
+            <summary>
+            Extension class to register additional helpers as Kernel System helpers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelHelpersUtils.RegisterHelperSafe(HandlebarsDotNet.IHandlebars,System.String,HandlebarsDotNet.HandlebarsReturnHelper)">
+            <summary>
+            Registers a helper with the Handlebars instance, throwing an exception if a helper with the same name is already registered.
+            </summary>
+            <param name="handlebarsInstance">The <see cref="T:HandlebarsDotNet.IHandlebars"/>-instance.</param>
+            <param name="helperName">The name of the helper.</param>
+            <param name="helper">The helper to register.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelHelpersUtils.GetArgumentValue(System.Object,Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Returns value if defined, else, tries to resolve value from given KernelArguments dictionary.
+            </summary>
+            <param name="argument">Argument to process.</param>
+            <param name="kernelArguments">Dictionary of variables maintained by the Handlebars context.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelHelpersUtils.ProcessArguments(HandlebarsDotNet.Arguments,Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Processes arguments to resolve unbinded values. If argument was not bound to the Handlebars template at render time, get the value from the KernelArguments dictionary.
+            </summary>
+            <param name="arguments">Arguments to process.</param>
+            <param name="kernelArguments">Dictionary of variables maintained by the Handlebars context.</param>
+            <returns>Arguments with processed values.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelHelpersUtils.IsNumericType(System.Type)">
+            <summary>
+            Determines whether the specified type is a numeric type.
+            </summary>
+            <param name="type">The type to check.</param>
+            <returns>True if the type is a numeric type; otherwise, false.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelHelpersUtils.TryParseAnyNumber(System.String)">
+            <summary>
+            Tries to parse the input as any of the numeric types.
+            </summary>
+            <param name="input">The input string to parse.</param>
+            <returns>True if the input can be parsed as any of the numeric types; otherwise, false.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.PromptTemplates.Handlebars.Helpers.KernelHelpersUtils.DeserializeJsonNode(System.Text.Json.Nodes.JsonNode)">
+            <summary>
+            Tries to convert a <see cref="T:System.Text.Json.Nodes.JsonNode"/> object to a specific type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Verify.NotNull(System.Object,System.String)">
+            <summary>
+            Equivalent of ArgumentNullException.ThrowIfNull
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Verify.ParametersUniqueness(System.Collections.Generic.IReadOnlyList{Microsoft.SemanticKernel.KernelParameterMetadata})">
+            <summary>
+            Make sure every function parameter name is unique
+            </summary>
+            <param name="parameters">List of parameters</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientExtensions.SendWithSuccessCheckAsync(System.Net.Http.HttpClient,System.Net.Http.HttpRequestMessage,System.Net.Http.HttpCompletionOption,System.Threading.CancellationToken)">
+            <summary>
+            Sends an HTTP request using the provided <see cref="T:System.Net.Http.HttpClient"/> instance and checks for a successful response.
+            If the response is not successful, it logs an error and throws an <see cref="T:Microsoft.SemanticKernel.HttpOperationException"/>.
+            </summary>
+            <param name="client">The <see cref="T:System.Net.Http.HttpClient"/> instance to use for sending the request.</param>
+            <param name="request">The <see cref="T:System.Net.Http.HttpRequestMessage"/> to send.</param>
+            <param name="completionOption">Indicates if HttpClient operations should be considered completed either as soon as a response is available,
+            or after reading the entire response message including the content.</param>
+            <param name="cancellationToken">A <see cref="T:System.Threading.CancellationToken"/> for canceling the request.</param>
+            <returns>The <see cref="T:System.Net.Http.HttpResponseMessage"/> representing the response.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientExtensions.SendWithSuccessCheckAsync(System.Net.Http.HttpClient,System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)">
+            <summary>
+            Sends an HTTP request using the provided <see cref="T:System.Net.Http.HttpClient"/> instance and checks for a successful response.
+            If the response is not successful, it logs an error and throws an <see cref="T:Microsoft.SemanticKernel.HttpOperationException"/>.
+            </summary>
+            <param name="client">The <see cref="T:System.Net.Http.HttpClient"/> instance to use for sending the request.</param>
+            <param name="request">The <see cref="T:System.Net.Http.HttpRequestMessage"/> to send.</param>
+            <param name="cancellationToken">A <see cref="T:System.Threading.CancellationToken"/> for canceling the request.</param>
+            <returns>The <see cref="T:System.Net.Http.HttpResponseMessage"/> representing the response.</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Http.HttpClientProvider">
+            <summary>
+            Provides functionality for retrieving instances of HttpClient.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.GetHttpClient">
+            <summary>
+            Retrieves an instance of HttpClient.
+            </summary>
+            <returns>An instance of HttpClient.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.GetHttpClient(System.Net.Http.HttpClient)">
+            <summary>
+            Retrieves an instance of HttpClient.
+            </summary>
+            <returns>An instance of HttpClient.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.GetHttpClient(System.IServiceProvider)">
+            <summary>
+            Retrieves an instance of HttpClient.
+            </summary>
+            <returns>An instance of HttpClient.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.GetHttpClient(System.Net.Http.HttpClient,System.IServiceProvider)">
+            <summary>
+            Retrieves an instance of HttpClient.
+            </summary>
+            <returns>An instance of HttpClient.</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler">
+            <summary>
+            Represents a singleton implementation of <see cref="T:System.Net.Http.HttpClientHandler"/> that is not disposable.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler.#ctor">
+            <summary>
+            Private constructor to prevent direct instantiation of the class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler.Instance">
+            <summary>
+            Gets the singleton instance of <see cref="T:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler.Dispose(System.Boolean)">
+            <summary>
+            Disposes the underlying resources held by the <see cref="T:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler"/>.
+            This implementation does nothing to prevent unintended disposal, as it may affect all references.
+            </summary>
+            <param name="disposing">True if called from <see cref="M:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler.Dispose(System.Boolean)"/>, false if called from a finalizer.</param>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Http.HttpContentExtensions">
+            <summary>
+            Provides extension methods for working with HTTP content in a way that translates HttpRequestExceptions into HttpOperationExceptions.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpContentExtensions.ReadAsStringWithExceptionMappingAsync(System.Net.Http.HttpContent)">
+            <summary>
+            Reads the content of the HTTP response as a string and translates any HttpRequestException into an HttpOperationException.
+            </summary>
+            <param name="httpContent">The HTTP content to read.</param>
+            <returns>A string representation of the HTTP content.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpContentExtensions.ReadAsStreamAndTranslateExceptionAsync(System.Net.Http.HttpContent)">
+            <summary>
+            Reads the content of the HTTP response as a stream and translates any HttpRequestException into an HttpOperationException.
+            </summary>
+            <param name="httpContent">The HTTP content to read.</param>
+            <returns>A stream representing the HTTP content.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpContentExtensions.ReadAsByteArrayAndTranslateExceptionAsync(System.Net.Http.HttpContent)">
+            <summary>
+            Reads the content of the HTTP response as a byte array and translates any HttpRequestException into an HttpOperationException.
+            </summary>
+            <param name="httpContent">The HTTP content to read.</param>
+            <returns>A byte array representing the HTTP content.</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Http.HttpHeaderValues">
+            <summary>Provides HTTP header values for common purposes.</summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Http.HttpHeaderValues.UserAgent">
+            <summary>User agent string to use for all HTTP requests issued by Semantic Kernel.</summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Http.HttpResponseStream">
+            <summary>
+            Associate a response stream with its parent response for parity in life-cycle management.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.InternalTypeConverter">
+            <summary>
+            Provides internal utility methods for converting types to strings with consideration for CultureInfo.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.InternalTypeConverter.ConvertToString(System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts the given object value to a string representation using the appropriate CultureInfo.
+            </summary>
+            <param name="value">The object to convert.</param>
+            <param name="culture">The CultureInfo to consider during conversion.</param>
+            <returns>A string representation of the object value, considering the specified CultureInfo.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.InternalTypeConverter.GetTypeToStringConverterDelegate(System.Type)">
+            <summary>
+            Retrieves a type-to-string converter delegate for the specified source type.
+            </summary>
+            <param name="sourceType">The source Type for which to retrieve the type-to-string converter delegate.</param>
+            <returns>A Func delegate for converting the source type to a string, considering CultureInfo, or null if no suitable converter is found.</returns>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.InternalTypeConverter.s_converters">
+            <summary>Converter functions for converting types to strings.</summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.NonNullCollection`1">
+            <summary>
+            Provides a collection of non-null items.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.NonNullCollection`1._items">
+            <summary>
+            The underlying list of items.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SemanticKernel.NonNullCollection`1"/> class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SemanticKernel.NonNullCollection`1"/> class.
+            </summary>
+            <param name="items">The initial collection of items to populate this collection.</param>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.NonNullCollection`1.Item(System.Int32)">
+            <summary>
+            Gets or sets the item at the specified index in the collection.
+            </summary>
+            <param name="index">The index of the item to get or set.</param>
+            <returns>The item at the specified index.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is null.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">The <paramref name="index"/> was not valid for this collection.</exception>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.NonNullCollection`1.Count">
+            <summary>
+            Gets the number of items in the collection.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.Add(`0)">
+            <summary>
+            Adds an item to the collection.
+            </summary>
+            <param name="item">The item to add.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is null.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.Clear">
+            <summary>
+            Removes all items from the collection.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.Contains(`0)">
+            <summary>
+            Determines whether an item is in the collection.
+            </summary>
+            <param name="item">The item to locate.</param>
+            <returns>True if the item is found in the collection; otherwise, false.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is null.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.CopyTo(`0[],System.Int32)">
+            <summary>
+            Copies all of the items in the collection to an array, starting at the specified destination array index.
+            </summary>
+            <param name="array">The destination array into which the items should be copied.</param>
+            <param name="arrayIndex">The zero-based index into <paramref name="array"/> at which copying should begin.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="array"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">The number of items in the collection is greater than the available space from <paramref name="arrayIndex"/> to the end of <paramref name="array"/>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than 0.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.IndexOf(`0)">
+            <summary>
+            Searches for the specified item and returns the index of the first occurrence.
+            </summary>
+            <param name="item">The item to locate.</param>
+            <returns>The index of the first found occurrence of the specified item; -1 if the item could not be found.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.Insert(System.Int32,`0)">
+            <summary>
+            Inserts an item into the collection at the specified index.
+            </summary>
+            <param name="index">The index at which the item should be inserted.</param>
+            <param name="item">The item to insert.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is null.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.Remove(`0)">
+            <summary>
+            Removes the first occurrence of the specified item from the collection.
+            </summary>
+            <param name="item">The item to remove from the collection.</param>
+            <returns>True if the item was successfully removed; false if it wasn't located in the collection.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is null.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.RemoveAt(System.Int32)">
+            <summary>
+            Removes the item at the specified index from the collection.
+            </summary>
+            <param name="index">The index of the item to remove.</param>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.TypeConverterFactory">
+            <summary>
+            Factory for creating TypeConverter instances based on a provided type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.TypeConverterFactory.GetTypeConverter(System.Type)">
+            <summary>
+            Returns a TypeConverter instance for the specified type.
+            </summary>
+            <param name="type">The Type of the object to convert.</param>
+            <returns>A TypeConverter instance if a suitable converter is found, otherwise null.</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Text.JsonOptionsCache">
+            <summary>Caches common configurations of <see cref="T:System.Text.Json.JsonSerializerOptions"/>.</summary>\
+            <remarks>
+            All of the instances include a converter for <see cref="T:System.ReadOnlyMemory`1"/>.
+            Once the System.Text.Json package is upgraded to 8.0+, this will no longer be
+            necessary and the actual default can be used.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Text.JsonOptionsCache.ReadOnlyMemoryConverter">
+            <summary>Singleton for <see cref="P:Microsoft.SemanticKernel.Text.JsonOptionsCache.ReadOnlyMemoryConverter"/>.</summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Text.JsonOptionsCache.Default">
+            <summary>
+            Cached <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance for reading and writing JSON using the default settings.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Text.JsonOptionsCache.WriteIndented">
+            <summary>
+            Cached <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance for writing JSON with indentation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Text.JsonOptionsCache.ReadPermissive">
+            <summary>
+            Cached <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance for reading JSON in a permissive way,
+            including support for trailing commas, case-insensitive property names, and comments.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Text.ReadOnlyMemoryConverter">
+            <summary>Provides a converter for <see cref="T:System.ReadOnlyMemory`1"/>.</summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Text.ReadOnlyMemoryConverter.s_arrayConverter">
+            <summary>An instance of a converter for float[] that all operations delegate to.</summary>
+        </member>
+        <member name="T:System.Runtime.CompilerServices.IsExternalInit">
+            <summary>
+            Reserved to be used by the compiler for tracking metadata.
+            This class should not be used by developers in source code.
+            </summary>
+        </member>
+        <member name="T:System.ExceptionExtensions">
+            <summary>
+            Exception extension methods.
+            </summary>
+        </member>
+        <member name="M:System.ExceptionExtensions.IsCriticalException(System.Exception)">
+            <summary>
+            Check if an exception is of a type that should not be caught by the kernel.
+            </summary>
+            <param name="ex">Exception.</param>
+            <returns>True if <paramref name="ex"/> is a critical exception and should not be caught.</returns>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.ExperimentalAttribute">
+            <summary>
+             Indicates that an API is experimental and it may change in the future.
+            </summary>
+            <remarks>
+              This attribute allows call sites to be flagged with a diagnostic that indicates that an experimental
+              feature is used. Authors can use this attribute to ship preview features in their assemblies.
+            </remarks>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.ExperimentalAttribute.#ctor(System.String)">
+            <summary>
+             Initializes a new instance of the <see cref="T:System.Diagnostics.CodeAnalysis.ExperimentalAttribute"/> class, specifying the ID that the compiler will use
+             when reporting a use of the API the attribute applies to.
+            </summary>
+            <param name="diagnosticId">The ID that the compiler will use when reporting a use of the API the attribute applies to.</param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.ExperimentalAttribute.DiagnosticId">
+            <summary>
+             Gets the ID that the compiler will use when reporting a use of the API the attribute applies to.
+            </summary>
+            <value>The unique diagnostic ID.</value>
+            <remarks>
+             The diagnostic ID is shown in build output for warnings and errors.
+             <para>This property represents the unique ID that can be used to suppress the warnings or errors, if needed.</para>
+            </remarks>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.ExperimentalAttribute.UrlFormat">
+            <summary>
+             Gets or sets the URL for corresponding documentation.
+             The API accepts a format string instead of an actual URL, creating a generic URL that includes the diagnostic ID.
+            </summary>
+            <value>The format string that represents a URL to corresponding documentation.</value>
+            <remarks>An example format string is <c>https://contoso.com/obsoletion-warnings/{0}</c>.</remarks>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.AllowNullAttribute">
+            <summary>Specifies that null is allowed as an input even if the corresponding type disallows it.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.DisallowNullAttribute">
+            <summary>Specifies that null is disallowed as an input even if the corresponding type allows it.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.MaybeNullAttribute">
+            <summary>Specifies that an output may be null even if the corresponding type disallows it.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.NotNullAttribute">
+            <summary>Specifies that an output will not be null even if the corresponding type allows it.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute">
+            <summary>Specifies that when a method returns <see cref="P:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute.ReturnValue"/>, the parameter may be null even if the corresponding type disallows it.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute.#ctor(System.Boolean)">
+            <summary>Initializes the attribute with the specified return value condition.</summary>
+            <param name="returnValue">
+            The return value condition. If the method returns this value, the associated parameter may be null.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute.ReturnValue">
+            <summary>Gets the return value condition.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute">
+            <summary>Specifies that when a method returns <see cref="P:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute.ReturnValue"/>, the parameter will not be null even if the corresponding type allows it.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute.#ctor(System.Boolean)">
+            <summary>Initializes the attribute with the specified return value condition.</summary>
+            <param name="returnValue">
+            The return value condition. If the method returns this value, the associated parameter will not be null.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute.ReturnValue">
+            <summary>Gets the return value condition.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute">
+            <summary>Specifies that the output will be non-null if the named parameter is non-null.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute.#ctor(System.String)">
+            <summary>Initializes the attribute with the associated parameter name.</summary>
+            <param name="parameterName">
+            The associated parameter name.  The output will be non-null if the argument to the parameter specified is non-null.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute.ParameterName">
+            <summary>Gets the associated parameter name.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute">
+            <summary>Applied to a method that will never return under any circumstance.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.DoesNotReturnIfAttribute">
+            <summary>Specifies that the method will not return if the associated Boolean parameter is passed the specified value.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.DoesNotReturnIfAttribute.#ctor(System.Boolean)">
+            <summary>Initializes the attribute with the specified parameter value.</summary>
+            <param name="parameterValue">
+            The condition parameter value. Code after the method will be considered unreachable by diagnostics if the argument to
+            the associated parameter matches this value.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.DoesNotReturnIfAttribute.ParameterValue">
+            <summary>Gets the condition parameter value.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.MemberNotNullAttribute">
+            <summary>Specifies that the method or property will ensure that the listed field and property members have not-null values.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullAttribute.#ctor(System.String)">
+            <summary>Initializes the attribute with a field or property member.</summary>
+            <param name="member">
+            The field or property member that is promised to be not-null.
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullAttribute.#ctor(System.String[])">
+            <summary>Initializes the attribute with the list of field and property members.</summary>
+            <param name="members">
+            The list of field and property members that are promised to be not-null.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.MemberNotNullAttribute.Members">
+            <summary>Gets field or property member names.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute">
+            <summary>Specifies that the method or property will ensure that the listed field and property members have not-null values when returning with the specified return value condition.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.#ctor(System.Boolean,System.String)">
+            <summary>Initializes the attribute with the specified return value condition and a field or property member.</summary>
+            <param name="returnValue">
+            The return value condition. If the method returns this value, the associated parameter will not be null.
+            </param>
+            <param name="member">
+            The field or property member that is promised to be not-null.
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.#ctor(System.Boolean,System.String[])">
+            <summary>Initializes the attribute with the specified return value condition and list of field and property members.</summary>
+            <param name="returnValue">
+            The return value condition. If the method returns this value, the associated parameter will not be null.
+            </param>
+            <param name="members">
+            The list of field and property members that are promised to be not-null.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.ReturnValue">
+            <summary>Gets the return value condition.</summary>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.Members">
+            <summary>Gets field or property member names.</summary>
+        </member>
+        <member name="M:System.Linq.AsyncEnumerable.AnyAsync``1(System.Collections.Generic.IAsyncEnumerable{``0},System.Func{``0,System.Boolean},System.Threading.CancellationToken)">
+            <summary>
+            Determines whether any element of an async-enumerable sequence satisfies a condition.
+            </summary>
+            <typeparam name="TSource">The type of the elements in the source sequence.</typeparam>
+            <param name="source">An async-enumerable sequence whose elements to apply the predicate to.</param>
+            <param name="predicate">A function to test each element for a condition.</param>
+            <param name="cancellationToken">The optional cancellation token to be used for cancelling the sequence at any time.</param>
+            <returns>An async-enumerable sequence containing a single element determining whether any elements in the source sequence pass the test in the specified predicate.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="source"/> or <paramref name="predicate"/> is null.</exception>
+            <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        </member>
+        <member name="M:System.EnvExtensions.GetBoolEnvVar(System.String)">
+            <summary>
+            Source: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/core/Azure.Core/src/DiagnosticsOptions.cs
+            Values: https://learn.microsoft.com/en-us/dotnet/api/azure.core.diagnosticsoptions.istelemetryenabled?view=azure-dotnet
+            </summary>
+        </member>
+        <member name="T:System.TypeExtensions">
+            <summary>
+            Extensions methods for <see cref="T:System.Type"/>.
+            </summary>
+        </member>
+        <member name="M:System.TypeExtensions.TryGetGenericResultType(System.Type,System.Type@)">
+            <summary>
+            Tries to get the result type from a generic parameter.
+            </summary>
+            <param name="returnType">Return type.</param>
+            <param name="resultType">The result type of the Nullable generic parameter.</param>
+            <returns><c>true</c> if the result type was successfully retrieved; otherwise, <c>false</c>.</returns>
+            TODO [@teresaqhoang]: Issue #4202 Cache Generic Types Extraction - Handlebars
+        </member>
+        <member name="M:System.TypeExtensions.GetFriendlyTypeName(System.Type)">
+            <summary>
+            Returns a string with the type's name. If the type is generic, it also includes the type parameters in a readable format.
+            </summary>
+            <param name="type">Target type.</param>
+        </member>
+    </members>
+</doc>

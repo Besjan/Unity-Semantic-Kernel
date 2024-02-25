@@ -1,0 +1,91 @@
+I want to send an email to the marketing team celebrating their recent milestone.
+
+What is the intent of this request? I want to send an email to the marketing team celebrating their recent milestone.
+
+0.0 Initial prompt
+
+It seems you'd like to compose and send an email to your marketing team, acknowledging and celebrating their latest achievement. This is a great way to boost morale and motivation, as well as maintain open lines of communication within your team. To help you out, here's a suggested structure for your email:
+1. Start with a warm greeting, addressing the team collectively or individually, depending on the size and culture of your organization.
+2. Briefly describe what the milestone is and why it's significant. Use clear, concise language to ensure everyone understands the importance of the accomplishment.
+3. Share the impact this achievement will have on the organization or project at hand. This not only highlights the value of the team's work but also keeps everyone focused on the big picture.
+4. Express your appreciation and gratitude towards each team member for their contributions. Acknowledging individual efforts can go a long way in boosting morale and motivation.
+5. Provide any necessary follow-up details, such as plans for further celebrations or upcoming tasks that stem from this milestone.
+6. End with a positive and motivational call to action that encourages the team to keep pushing forward towards new achievements.
+7. Use a clear and friendly tone throughout your email, making sure to tailor your language to fit your audience and organizational culture.
+I hope you find these suggestions helpful! Let me know if there's anything else I can assist you with.
+
+1.0 Make the prompt more specific
+
+To complete this task, you can use the "SendEmail" function. Here's a suggestion for the body of the email:
+```
+Subject: Celebrating Marketing Team's Recent Milestone 🎉
+
+Hello Marketing Team,
+
+I wanted to take a moment to acknowledge and celebrate your recent achievement. Your hard work and dedication has led to [insert specific milestone here], and I am impressed by the team's resilience and innovation during this project.
+
+Your efforts have not gone unnoticed, and I am confident that this is just the beginning of even greater successes for our marketing department. Keep up the fantastic work!
+
+Best regards,
+[Your Name]
+```
+
+2.0 Add structure to the output with formatting
+
+SendEmail.
+
+2.1 Add structure to the output with formatting (using Markdown and JSON)
+
+```json
+{
+    "intent": {
+        "SendEmail": {
+            "recipients": ["marketing_team@company.com"],
+            "subject": "Congratulations Marketing Team on Reaching a Milestone!",
+            "body": "Dear Marketing Team,\n\nWe are thrilled to celebrate your recent achievement with you! Your hard work and dedication have not gone unnoticed and we want to express our gratitude. Keep up the excellent work!\n\nBest regards,\nYour Name"
+        }
+    }
+}
+```
+
+3.0 Provide examples with few-shot prompting
+
+SendEmail
+
+User Input: Complete the report on Q2 sales by end of day today.
+Intent: CompleteTask
+
+User Input: Create a presentation for our investors next week.
+Intent: CreateDocument
+
+User Input: Please help me write an email to HR about my new position in the company.
+Intent: SendEmail
+
+User Input: Send a reminder message to the sales team about tomorrow's meeting.
+Intent: SendMessage
+
+User Input: Generate a document summarizing our Q3 strategy.
+Intent: CreateDocument
+
+User Input: Approve the budget for the upcoming project.
+Intent: SendMessage (assuming approval can be sent via message) or SendEmail (if email is required)
+
+4.0 Tell the AI what to do to avoid doing something wrong
+
+CreateDocument (for drafting email) and then SendEmail.
+
+5.0 Provide context to the AI
+
+SendEmail. I will draft and send an email on your behalf celebrating the marketing team's recent milestone.
+
+6.0 Using message roles in chat completion prompts
+
+
+### Response:
+CreateDocument (to write the email content) and SendEmail (to distribute it).
+
+7.0 Give your AI words of encouragement
+
+ Can you help create it?
+### Response:
+CreateDocument (or DraftEmail, depending on your system) and then SendEmail.

@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Handlebars.Net</id>
+    <version>2.1.4</version>
+    <authors>Rex Morgan</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <icon>hbnet-icon.png</icon>
+    <projectUrl>https://github.com/Handlebars-Net</projectUrl>
+    <description>Blistering-fast Handlebars.js templates in your .NET application.</description>
+    <releaseNotes>https://github.com/Handlebars-Net/Handlebars.Net/releases/tag/2.1.4</releaseNotes>
+    <copyright>Copyright © 2014-2020 Rex Morgan</copyright>
+    <tags>handlebars mustache templating engine compiler</tags>
+    <repository type="git" url="https://github.com/Handlebars-Net/Handlebars.Net" commit="50614fd844e5360eb10e76154aa74da4d7bf12ce" />
+    <dependencies>
+      <group targetFramework=".NETFramework4.5.1">
+        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETFramework4.5.2">
+        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETFramework4.6">
+        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard1.3">
+        <dependency id="Microsoft.CSharp" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="NETStandard.Library" version="1.6.1" exclude="Build,Analyzers" />
+        <dependency id="System.ComponentModel.TypeConverter" version="4.3.0" exclude="Build,Analyzers" />
+        <dependency id="System.Diagnostics.Contracts" version="4.3.0" exclude="Build,Analyzers" />
+        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Microsoft.CSharp" version="4.7.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.1">
+        <dependency id="Microsoft.CSharp" version="4.7.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework=".NETFramework4.5.1, .NETFramework4.5.2, .NETFramework4.6" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

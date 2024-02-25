@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Azure.AI.OpenAI</id>
+    <version>1.0.0-beta.13</version>
+    <authors>Microsoft</authors>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>azureicon.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/Azure/azure-sdk-for-net/blob/Azure.AI.OpenAI_1.0.0-beta.13/sdk/openai/Azure.AI.OpenAI/README.md</projectUrl>
+    <description>Azure's official .NET library for OpenAI inference that supports Completions, Chat, and Embeddings.
+      Works with Azure OpenAI resources as well as the non-Azure OpenAI endpoint.</description>
+    <releaseNotes>https://github.com/Azure/azure-sdk-for-net/blob/Azure.AI.OpenAI_1.0.0-beta.13/sdk/openai/Azure.AI.OpenAI/CHANGELOG.md</releaseNotes>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>Microsoft Azure OpenAI</tags>
+    <repository type="git" url="https://github.com/Azure/azure-sdk-for-net" commit="ef27a1d962aecd77c2c704e3f8a6c458ce287a6e" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Azure.Core" version="1.37.0" exclude="Build,Analyzers" />
+        <dependency id="System.ClientModel" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Json" version="4.7.2" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
