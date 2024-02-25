@@ -6,14 +6,14 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Plugins.Core;
 using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 using UnityEngine;
 
 /// <summary>
-/// This example demonstrates how to templatize prompts as described at
-/// https://learn.microsoft.com/semantic-kernel/prompts/templatizing-prompts
+/// https://learn.microsoft.com/en-us/semantic-kernel/prompts/calling-nested-functions?tabs=Csharp
 /// </summary>
-public class Templates : MonoBehaviour
+public class FunctionsWithinPrompts: MonoBehaviour
 {
 	[SerializeField] Chat chatUI;
 
@@ -27,17 +27,21 @@ public class Templates : MonoBehaviour
 
 	private void Awake()
 	{
-		chatUI.OnMessageSent.AddListener(async (string message) => await UserRequest(message));
+		chatUI.OnMessageSent.AddListener((string message) => UserRequest(message));
 
-		kernel = Kernel.CreateBuilder()
-			.AddOpenAIChatCompletion(modelId: "_", apiKey: "_", httpClient: new HttpClient(new LMStudio()))
-			.Build();
+		var kernelBuilder = Kernel.CreateBuilder()
+			.AddOpenAIChatCompletion(modelId: "_", apiKey: "_", httpClient: new HttpClient(new LMStudio()));
+
+		kernelBuilder.Plugins.AddFromType<ConversationSummaryPlugin>();
+
+		kernel = kernelBuilder.Build();
 
 		// Create a Semantic Kernel template for chat
 		chat = kernel.CreateFunctionFromPrompt(
-			@"{{$history}}
-            User: {{$request}}
-            Assistant: ");
+			@"{{ConversationSummaryPlugin.SummarizeConversation $history}}
+			User: {{$request}}
+			Assistant: "
+		);
 
 		// Create choices
 		choices = new() { "ContinueConversation", "EndConversation" };
@@ -72,9 +76,7 @@ Choices: {{choices}}.</message>
     {{/each}}
 {{/each}}
 
-{{#each chatHistory}}
-    <message role=""{{role}}"">{{content}}</message>
-{{/each}}
+{{ConversationSummaryPlugin-SummarizeConversation history}}
 
 <message role=""user"">{{request}}</message>
 <message role=""system"">Intent:</message>",
@@ -86,7 +88,7 @@ Choices: {{choices}}.</message>
 		history = new();
 	}
 
-	public async Task UserRequest(string request)
+	public async void UserRequest(string request)
 	{
 		// Create assistant chat entry
 		chatUI.Container.AddMessage(new Message(chatUI.Members[1], string.Empty));

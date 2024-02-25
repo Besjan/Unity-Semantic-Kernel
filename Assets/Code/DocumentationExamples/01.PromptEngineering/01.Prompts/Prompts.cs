@@ -7,7 +7,6 @@ using TMPro;
 using UnityEngine;
 
 /// <summary>
-/// This example demonstrates how to use prompts as described at
 /// https://learn.microsoft.com/semantic-kernel/prompts/your-first-prompt
 /// </summary>
 public class Prompts : MonoBehaviour
