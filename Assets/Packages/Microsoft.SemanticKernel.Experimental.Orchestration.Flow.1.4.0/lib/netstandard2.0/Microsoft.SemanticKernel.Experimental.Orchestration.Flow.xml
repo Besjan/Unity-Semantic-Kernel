@@ -1,0 +1,1388 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SemanticKernel.Experimental.Orchestration.Flow</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowCatalog">
+            <summary>
+            Interface for flow catalog, which provides functionality of flow registration, enumeration and search.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowCatalog.GetFlowsAsync">
+            <summary>
+            Get all <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/> instances from the repository
+            </summary>
+            <returns>flows</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowCatalog.GetFlowAsync(System.String)">
+            <summary>
+            Get <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/> by name
+            </summary>
+            <param name="flowName">the flow name</param>
+            <returns>flow given the name</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowCatalog.RegisterFlowAsync(Microsoft.SemanticKernel.Experimental.Orchestration.Flow)">
+            <summary>
+            Register flow in the catalog
+            </summary>
+            <param name="flow">flow</param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowExecutor">
+            <summary>
+            Flow executor interface
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowExecutor.ExecuteFlowAsync(Microsoft.SemanticKernel.Experimental.Orchestration.Flow,System.String,System.String,Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Execute the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/>
+            </summary>
+            <param name="flow">Flow</param>
+            <param name="sessionId">Session id, which is used to track the execution status.</param>
+            <param name="input">The input from client to continue the execution.</param>
+            <param name="kernelArguments">The request kernel arguments </param>
+            <returns>The execution context</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowStatusProvider">
+            <summary>
+            The flow status provider interface.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowStatusProvider.GetExecutionStateAsync(System.String)">
+            <summary>
+            Get the state of current execution session.
+            </summary>
+            <param name="sessionId">The session id</param>
+            <returns>The variables</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowStatusProvider.SaveExecutionStateAsync(System.String,Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState)">
+            <summary>
+            Save the state for current execution session.
+            </summary>
+            <param name="sessionId">The session id</param>
+            <param name="state">The execution state</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowStatusProvider.GetChatHistoryAsync(System.String,System.String)">
+            <summary>
+            Get the chat history for current execution session.
+            </summary>
+            <param name="sessionId">The session id</param>
+            <param name="stepId">The step id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowStatusProvider.SaveChatHistoryAsync(System.String,System.String,Microsoft.SemanticKernel.ChatCompletion.ChatHistory)">
+            <summary>
+            Save the chat history for current execution session.
+            </summary>
+            <param name="sessionId">The session id</param>
+            <param name="stepId">The step id</param>
+            <param name="history">The chat history</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowStatusProvider.GetReActStepsAsync(System.String,System.String)">
+            <summary>
+            Get the ReAct history for current execution <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep"/>.
+            </summary>
+            <param name="sessionId">The session id</param>
+            <param name="stepId">The step id</param>
+            <returns>The list of ReAct steps for current flow step.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowStatusProvider.SaveReActStepsAsync(System.String,System.String,System.Collections.Generic.List{Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActStep})">
+            <summary>
+            Save the ReAct history for current execution step to <see cref="N:Microsoft.SemanticKernel.Memory"/>.
+            </summary>
+            <param name="sessionId">The session id</param>
+            <param name="stepId">The step id</param>
+            <param name="steps">The executed steps</param>
+            <returns>Task</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowValidator">
+            <summary>
+            Flow validator interface
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowValidator.Validate(Microsoft.SemanticKernel.Experimental.Orchestration.Flow)">
+            <summary>
+            Validate if the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/> is valid.
+            </summary>
+            <param name="flow"></param>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.Constants.StopAndPromptFunctionName">
+            <summary>
+            The function name to indicate stop execution and prompt user
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.Constants.StopAndPromptParameterName">
+            <summary>
+            The parameter name of StopAndPrompt function
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.Constants.ActionVariableNames.ChatHistory">
+            <summary>
+            Variable name for the chat history
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.Constants.ActionVariableNames.ChatInput">
+            <summary>
+            Variable name for the chat input
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.Constants.ActionVariableNames.All">
+            <summary>
+            All reserved variable names
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.Constants.ChatPluginVariables.PromptInputName">
+            <summary>
+            Variable name to prompt input
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.Constants.ChatPluginVariables.ExitLoopName">
+            <summary>
+            Variable name to exit out the of AtLeastOnce or ZeroOrMore loop
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.Constants.ChatPluginVariables.ContinueLoopName">
+            <summary>
+            Variable name to force the next iteration of the of AtLeastOnce or ZeroOrMore loop
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.Constants.ChatPluginVariables.StopFlowName">
+            <summary>
+            Variable name to terminate the flow
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.Constants.ChatPluginVariables.DefaultValue">
+            <summary>
+            Default variable value
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.Constants.ChatPluginVariables.ControlVariables">
+            <summary>
+            The variables that change the default flow
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState">
+            <summary>
+            Execution state
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.CurrentStepIndex">
+            <summary>
+            Index of current step
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.Variables">
+            <summary>
+            Execution state described by variables.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.StepStates">
+            <summary>
+            Execution state of each step
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.StepExecutionState">
+            <summary>
+            Step execution state
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.StepExecutionState.Status">
+            <summary>
+            The status of step execution
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.StepExecutionState.ExecutionCount">
+            <summary>
+            The execution count of step. The value could be larger than one if the step allows repeatable execution.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.StepExecutionState.Output">
+            <summary>
+            The output variables provided by the step
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.StepExecutionState.AddOrUpdateVariable(System.Int32,System.String,System.String)">
+            <summary>
+            Add or update variable for the step
+            </summary>
+            <param name="executionIndex">The execution index</param>
+            <param name="key">The key of variable.</param>
+            <param name="value">The value of variable.</param>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.Status">
+            <summary>
+            The execution status enum
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.Status.NotStarted">
+            <summary>
+            Not started
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.Status.InProgress">
+            <summary>
+            In progress
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState.Status.Completed">
+            <summary>
+            Completed
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor">
+             <summary>
+             This is a flow executor which iterates over the flow steps and executes them one by one.
+             </summary>
+             <remarks>
+             For each step, it is executed in the ReAct (Reasoning-Act-Observe) style, which is similar as StepwisePlanner, with the following differences:
+             1. It is implemented in a way so that the chat could be streamed for more effective reasoning, action and feedback loop.
+             2. The user input would be part of observation for the engine to reason and determine next action.
+             3. For each step, it is considered as complete by verifying all the outputs are provided in programmatic way, instead of LLM evaluation.
+            
+             Further consolidation can happen in the future so that flow executor becomes a generalization of StepwisePlanner.
+             And both chatMode and completionMode could be supported.
+             </remarks>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor._kernelBuilder">
+            <summary>
+            The kernel builder
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor._logger">
+            <summary>
+            The logger
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor._globalPluginCollection">
+            <summary>
+            The global plugin collection
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor._config">
+            <summary>
+            The flow planner config
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor._flowStatusProvider">
+            <summary>
+            The flow status provider
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor._systemKernel">
+            <summary>
+            System kernel for flow execution
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor._reActEngine">
+            <summary>
+            Re-Act engine for flow execution
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor.RestrictedPluginName">
+            <summary>
+            Restricted plugin name
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor.s_finalAnswerRegex">
+            <summary>
+            The regex for parsing the final answer response
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor.s_questionRegex">
+            <summary>
+            The regex for parsing the question
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor.s_thoughtRegex">
+            <summary>
+            The regex for parsing the thought response
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor._checkRepeatStepFunction">
+            <summary>
+            Check repeat step function
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor._checkStartStepFunction">
+            <summary>
+            Check start step function
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor._executeFlowFunction">
+            <summary>
+            ExecuteFlow function
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.FlowExecutor._executeStepFunction">
+            <summary>
+            ExecuteStep function
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine">
+            <summary>
+            Chat ReAct Engine
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine._logger">
+            <summary>
+            The logger
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine._reActFunction">
+            <summary>
+            Re-Act function for flow execution
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine._config">
+            <summary>
+            The flow planner config
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine.RestrictedPluginName">
+            <summary>
+            The goal to use when creating semantic functions that are restricted from flow creation
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine.Action">
+            <summary>
+            The Action tag
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine.Thought">
+            <summary>
+            The Thought tag
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine.Observation">
+            <summary>
+            The Observation tag
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine.ScratchPadPrefix">
+            <summary>
+            The prefix used for the scratch pad
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine.s_actionRegex">
+            <summary>
+            The regex for parsing the action response
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine.s_finalActionRegex">
+            <summary>
+            The regex for parsing the final action response
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine.s_thoughtRegex">
+            <summary>
+            The regex for parsing the thought response
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine.s_finalAnswerRegex">
+            <summary>
+            The regex for parsing the final answer response
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActStep">
+            <summary>
+            An ReAct (Reasoning-Action-Observation) step in flow execution.
+            </summary>
+            <remarks>
+            https://arxiv.org/pdf/2210.03629.pdf
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActStep.Thought">
+            <summary>
+            Gets or sets the step number.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActStep.Action">
+            <summary>
+            Gets or sets the action of the step
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActStep.ActionVariables">
+            <summary>
+            Gets or sets the variables for the action
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActStep.Observation">
+            <summary>
+            Gets or sets the output of the action
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActStep.FinalAnswer">
+            <summary>
+            Gets or sets the output of the system
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActStep.OriginalResponse">
+            <summary>
+            The raw response from the action
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStatusProvider">
+            <summary>
+            Default flow status provider implemented on top of <see cref="T:Microsoft.SemanticKernel.Memory.IMemoryStore"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStatusProvider.ConnectAsync(Microsoft.SemanticKernel.Memory.IMemoryStore,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStatusProvider"/> class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStatusProvider.#ctor(Microsoft.SemanticKernel.Memory.IMemoryStore,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStatusProvider"/> class.
+            </summary>
+            <param name="memoryStore"><see cref="T:Microsoft.SemanticKernel.Memory.IMemoryStore"/> instance</param>
+            <param name="collectionName">Collection name in <see cref="T:Microsoft.SemanticKernel.Memory.IMemoryStore"/> instance</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStatusProvider.GetExecutionStateAsync(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStatusProvider.SaveExecutionStateAsync(System.String,Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ExecutionState)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStatusProvider.GetChatHistoryAsync(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStatusProvider.SaveChatHistoryAsync(System.String,System.String,Microsoft.SemanticKernel.ChatCompletion.ChatHistory)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStatusProvider.GetReActStepsAsync(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStatusProvider.SaveReActStepsAsync(System.String,System.String,System.Collections.Generic.List{Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActStep})">
+            <inheritdoc/>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowExtensions">
+            <summary>
+            Extension methods for <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowExtensions.BuildReferenceAsync(Microsoft.SemanticKernel.Experimental.Orchestration.Flow,Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowCatalog)">
+            <summary>
+            Hydrate the reference steps in the flow.
+            </summary>
+            <param name="flow">the flow</param>
+            <param name="flowRepository">the flow repository</param>
+            <returns>The flow with hydrated steps</returns>
+            <exception cref="T:System.ArgumentException">if referenced flow cannot be found in the repository</exception>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.FunctionResultExtensions">
+            <summary>
+            Extension methods for <see cref="T:Microsoft.SemanticKernel.FunctionResult"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FunctionResultExtensions.IsPromptInput(Microsoft.SemanticKernel.FunctionResult)">
+            <summary>
+            Check if we should prompt user for input based on function result.
+            </summary>
+            <param name="result">Function result.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FunctionResultExtensions.IsContinueLoop(Microsoft.SemanticKernel.FunctionResult)">
+            <summary>
+            Check if we should force the next iteration loop based on function result.
+            </summary>
+            <param name="result">Function result.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FunctionResultExtensions.TryGetExitLoopResponse(Microsoft.SemanticKernel.FunctionResult,System.String@)">
+            <summary>
+            Check if we should exit the loop based on function result.
+            </summary>
+            <param name="result">Function result.</param>
+            <param name="response">The response to exit loop</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FunctionResultExtensions.IsTerminateFlow(Microsoft.SemanticKernel.FunctionResult)">
+            <summary>
+            Check if we should terminate flow based on function result.
+            </summary>
+            <param name="result">Function result.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FunctionResultExtensions.IsComplete(Microsoft.SemanticKernel.FunctionResult,Microsoft.SemanticKernel.Experimental.Orchestration.Flow)">
+            <summary>
+            Check if all arguments to be provided with the flow is available in the context
+            </summary>
+            <param name="result">Function result.</param>
+            <param name="flow">flow</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FunctionResultExtensions.GetChatHistory(Microsoft.SemanticKernel.FunctionResult)">
+            <summary>
+            Get <see cref="T:Microsoft.SemanticKernel.ChatCompletion.ChatHistory"/> from context.
+            </summary>
+            <param name="result">Function result.</param>
+            <returns>The chat history</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FunctionResultExtensions.GetChatInput(Microsoft.SemanticKernel.FunctionResult)">
+            <summary>
+            Get latest chat input from context.
+            </summary>
+            <param name="result">Function result.</param>
+            <returns>The latest chat input.</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.KernelArgumentsExtensions">
+            <summary>
+            Extension methods for <see cref="T:Microsoft.SemanticKernel.KernelArguments"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.KernelArgumentsExtensions.IsPromptInput(Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Check if we should prompt user for input based on current context.
+            </summary>
+            <param name="variables">Context arguments.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.KernelArgumentsExtensions.IsContinueLoop(Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Check if we should force the next iteration loop based on current context.
+            </summary>
+            <param name="arguments">Context arguments.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.KernelArgumentsExtensions.IsTerminateFlow(Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Check if we should terminate flow based on current context.
+            </summary>
+            <param name="arguments">Context arguments.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.KernelArgumentsExtensions.IsComplete(Microsoft.SemanticKernel.KernelArguments,Microsoft.SemanticKernel.Experimental.Orchestration.Flow)">
+            <summary>
+            Check if all arguments to be provided with the flow is available in the context
+            </summary>
+            <param name="arguments">Context arguments.</param>
+            <param name="flow">flow</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.KernelArgumentsExtensions.GetChatHistory(Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Get <see cref="T:Microsoft.SemanticKernel.ChatCompletion.ChatHistory"/> from context.
+            </summary>
+            <param name="arguments">Context arguments.</param>
+            <returns>The chat history</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.KernelArgumentsExtensions.GetChatInput(Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Get latest chat input from context.
+            </summary>
+            <param name="arguments">Context arguments.</param>
+            <returns>The latest chat input.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.KernelArgumentsExtensions.PromptInput(Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Signal the orchestrator to prompt user for input with current function response.
+            </summary>
+            <param name="arguments">Context arguments.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.KernelArgumentsExtensions.ExitLoop(Microsoft.SemanticKernel.KernelArguments,System.String)">
+            <summary>
+            Signal the orchestrator to exit out of the AtLeastOnce or ZeroOrMore loop. If response is non-null, that value will be outputted to the user.
+            </summary>
+            <param name="arguments">Context arguments.</param>
+            <param name="response">context</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.KernelArgumentsExtensions.ContinueLoop(Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Signal the orchestrator to go to the next iteration of the loop in the AtLeastOnce or ZeroOrMore step.
+            </summary>
+            <param name="arguments">Context arguments.</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.KernelArgumentsExtensions.TerminateFlow(Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Signal the orchestrator to terminate the flow.
+            </summary>
+            <param name="arguments">context</param>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.PromptTemplateConfigExtensions">
+            <summary>
+            Extension methods for PromptTemplateConfig
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.PromptTemplateConfigExtensions.SetMaxTokens(Microsoft.SemanticKernel.PromptTemplateConfig,System.Int32)">
+            <summary>
+            Set the max_tokens request setting to be used by OpenAI models
+            </summary>
+            <param name="config">PromptTemplateConfig instance</param>
+            <param name="maxTokens">Value of max tokens to set</param>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestrator">
+            <summary>
+            A flow orchestrator that using semantic kernel for execution.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestrator.#ctor(Microsoft.SemanticKernel.IKernelBuilder,Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowStatusProvider,System.Collections.Generic.Dictionary{System.Object,System.String},Microsoft.SemanticKernel.Experimental.Orchestration.Abstractions.IFlowValidator,Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig)">
+            <summary>
+            Initialize a new instance of the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestrator"/> class.
+            </summary>
+            <param name="kernelBuilder">The semantic kernel builder.</param>
+            <param name="flowStatusProvider">The flow status provider.</param>
+            <param name="globalPluginCollection">The global plugin collection</param>
+            <param name="validator">The flow validator.</param>
+            <param name="config">Optional configuration object</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestrator.ExecuteFlowAsync(Microsoft.SemanticKernel.Experimental.Orchestration.Flow,System.String,System.String,Microsoft.SemanticKernel.KernelArguments)">
+            <summary>
+            Execute a given flow.
+            </summary>
+            <param name="flow">goal to achieve</param>
+            <param name="sessionId">execution session id</param>
+            <param name="input">current input</param>
+            <param name="kernelArguments">execution kernel arguments</param>
+            <returns>KernelArguments, which includes a json array of strings as output. The flow result is also exposed through the context when completes.</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig">
+            <summary>
+            Configuration for flow planner instances.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig.ExcludedPlugins">
+            <summary>
+            A list of plugins to exclude from the plan creation request.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig.ExcludedFunctions">
+            <summary>
+            A list of functions to exclude from the plan creation request.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig.MaxTokens">
+            <summary>
+            The maximum number of tokens to allow in a plan.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig.MaxVariableLength">
+            <summary>
+            The maximum length of a string variable.
+            </summary>
+            <remarks>
+            In most cases, the required variables are passed to ReAct engine to infer the next plugin and parameters to execute.
+            However when the variable is too long, it will either be truncated or decrease the robustness of value passing.
+            To mitigate that, the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Execution.ReActEngine"/> will avoid rendering the variables exceeding MaxVariableLength in the prompt.
+            And the variables should be accessed implicitly from ContextVariables instead of function parameters by the plugins.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig.MaxStepIterations">
+            <summary>
+            The maximum number of iterations to allow for a step.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig.MinIterationTimeMs">
+            <summary>
+            The minimum time to wait between iterations in milliseconds.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig.ReActPromptTemplateConfig">
+            <summary>
+            Optional. The prompt template configuration override for the ReAct engine.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig.EnableAutoTermination">
+            <summary>
+            When this is enabled, the flow will be terminated automatically if ReAct engine has exhausted available plugins.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig.AIServiceIds">
+            <summary>
+            Optional. The allowed AI service id for the React engine.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig.AIRequestSettings">
+            <summary>
+            Optional. The AI request settings for the ReAct engine.
+            </summary>
+            <remarks>
+            Prompt used for reasoning may be different for different models, the prompt selection would be based on the PromptExecutionSettings.
+            if the built in prompt template does not work for your model, suggest to override it with <see cref="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowOrchestratorConfig.ReActPromptTemplateConfig"/>.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowSerializer">
+            <summary>
+            Serializer for <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/>
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.FlowSerializer.s_deserializeOptions">
+            <summary>Options for <see cref="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowSerializer.DeserializeFromJson(System.String)"/>.</summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowSerializer.DeserializeFromYaml(System.String)">
+            <summary>
+            Deserialize flow from yaml
+            </summary>
+            <param name="yaml">the yaml string</param>
+            <returns>the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/> instance</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowSerializer.DeserializeFromJson(System.String)">
+            <summary>
+            Deserialize flow from json
+            </summary>
+            <param name="json">the json string</param>
+            <returns>the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/> instance</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowValidator">
+            <summary>
+            The flow validator
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowValidator.Validate(Microsoft.SemanticKernel.Experimental.Orchestration.Flow)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.CompletionType">
+            <summary>
+            The completion type of step
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.CompletionType.Once">
+            <summary>
+            Once
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.CompletionType.Optional">
+            <summary>
+            Optional
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.CompletionType.AtLeastOnce">
+            <summary>
+            At least once
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Experimental.Orchestration.CompletionType.ZeroOrMore">
+            <summary>
+            Optional or multiple times
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow">
+            <summary>
+            Flow data model
+            </summary>
+            <remarks>
+            Principles:
+            1. The model should be decoupled from execution status
+            2. The model is mutable to allow dynamic changes
+            3. The model doesn't enforce any execution order as long as the dependencies are satisfied
+            </remarks>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Flow.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/> class.
+            </summary>
+            <param name="name">The name of flow</param>
+            <param name="goal">The goal of flow</param>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Flow.Steps">
+            <summary>
+            Steps of the flow
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Flow.Name">
+            <summary>
+            Friendly name and identifier of the flow
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Flow.AddStep(Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep)">
+            <summary>
+            Adds a step to the flow
+            </summary>
+            <param name="step">the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep"/> instance</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.Flow.AddSteps(Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep[])">
+            <summary>
+            Adds steps to the flow
+            </summary>
+            <param name="steps">the array of <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep"/> instance to be add</param>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.Flow.Requires">
+            <inheritdoc/>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep">
+            <summary>
+            Step within a <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/> which defines the step goal, available plugins, required and provided variables.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.#ctor(System.String,System.Func{Microsoft.SemanticKernel.Kernel,System.Collections.Generic.Dictionary{System.Object,System.String},System.Collections.Generic.IEnumerable{System.Object}})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep"/> class.
+            </summary>
+            <param name="goal">The goal of step</param>
+            <param name="pluginsFactory">The factory to get plugins</param>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.Goal">
+            <summary>
+            Goal of the step
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.CompletionType">
+            <summary>
+            <see cref="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.CompletionType"/> of the step
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.StartingMessage">
+            <summary>
+            If the CompletionType is CompletionType.ZeroOrMore, this message will be used to ask the user if they want to execute the current step or skip it.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.TransitionMessage">
+            <summary>
+            If the CompletionType is CompletionType.AtLeastOnce or CompletionType.ZeroOrMore, this message will be used to ask the user if they want to try the step again.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.Requires">
+            <summary>
+            Parameters required for executing the step
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.Provides">
+            <summary>
+            Variables to be provided by the step
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.Passthrough">
+            <summary>
+            Variables to be passed through on iterations of the step
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.Plugins">
+            <summary>
+            Gets or sets the plugin available for the current step
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.AddRequires(System.String[])">
+            <summary>
+            Register the required arguments for the step
+            </summary>
+            <param name="requiredArguments">Array of required arguments</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.AddProvides(System.String[])">
+            <summary>
+            Register the arguments provided by the step
+            </summary>
+            <param name="providedArguments">Array of provided arguments</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.AddPassthrough(System.String[],System.Boolean)">
+            <summary>
+            Register the arguments passed through by the step
+            </summary>
+            <param name="passthroughArguments">Array of passthrough arguments</param>
+            <param name="isReferencedFlow">Is referenced flow</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.LoadPlugins(Microsoft.SemanticKernel.Kernel,System.Collections.Generic.Dictionary{System.Object,System.String})">
+            <summary>
+            Get the plugin instances registered with the step
+            </summary>
+            <param name="kernel">The semantic kernel</param>
+            <param name="globalPlugins">The global plugins available</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep.DependsOn(Microsoft.SemanticKernel.Experimental.Orchestration.FlowStep)">
+            <summary>
+            Check if the step depends on another step
+            </summary>
+            <param name="otherStep">The other step</param>
+            <returns>true if the step depends on the other step, false otherwise</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Experimental.Orchestration.ReferenceFlowStep">
+            <summary>
+            The flow step which references another flow.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.ReferenceFlowStep.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/> class.
+            </summary>
+            <param name="flowName">The name of referenced flow</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Experimental.Orchestration.ReferenceFlowStep.#ctor">
+            <summary>
+            Only for deserialization.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Experimental.Orchestration.ReferenceFlowStep.FlowName">
+            <summary>
+            Name of reference <see cref="T:Microsoft.SemanticKernel.Experimental.Orchestration.Flow"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Verify.NotNull(System.Object,System.String)">
+            <summary>
+            Equivalent of ArgumentNullException.ThrowIfNull
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Verify.ParametersUniqueness(System.Collections.Generic.IReadOnlyList{Microsoft.SemanticKernel.KernelParameterMetadata})">
+            <summary>
+            Make sure every function parameter name is unique
+            </summary>
+            <param name="parameters">List of parameters</param>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientExtensions.SendWithSuccessCheckAsync(System.Net.Http.HttpClient,System.Net.Http.HttpRequestMessage,System.Net.Http.HttpCompletionOption,System.Threading.CancellationToken)">
+            <summary>
+            Sends an HTTP request using the provided <see cref="T:System.Net.Http.HttpClient"/> instance and checks for a successful response.
+            If the response is not successful, it logs an error and throws an <see cref="T:Microsoft.SemanticKernel.HttpOperationException"/>.
+            </summary>
+            <param name="client">The <see cref="T:System.Net.Http.HttpClient"/> instance to use for sending the request.</param>
+            <param name="request">The <see cref="T:System.Net.Http.HttpRequestMessage"/> to send.</param>
+            <param name="completionOption">Indicates if HttpClient operations should be considered completed either as soon as a response is available,
+            or after reading the entire response message including the content.</param>
+            <param name="cancellationToken">A <see cref="T:System.Threading.CancellationToken"/> for canceling the request.</param>
+            <returns>The <see cref="T:System.Net.Http.HttpResponseMessage"/> representing the response.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientExtensions.SendWithSuccessCheckAsync(System.Net.Http.HttpClient,System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)">
+            <summary>
+            Sends an HTTP request using the provided <see cref="T:System.Net.Http.HttpClient"/> instance and checks for a successful response.
+            If the response is not successful, it logs an error and throws an <see cref="T:Microsoft.SemanticKernel.HttpOperationException"/>.
+            </summary>
+            <param name="client">The <see cref="T:System.Net.Http.HttpClient"/> instance to use for sending the request.</param>
+            <param name="request">The <see cref="T:System.Net.Http.HttpRequestMessage"/> to send.</param>
+            <param name="cancellationToken">A <see cref="T:System.Threading.CancellationToken"/> for canceling the request.</param>
+            <returns>The <see cref="T:System.Net.Http.HttpResponseMessage"/> representing the response.</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Http.HttpClientProvider">
+            <summary>
+            Provides functionality for retrieving instances of HttpClient.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.GetHttpClient">
+            <summary>
+            Retrieves an instance of HttpClient.
+            </summary>
+            <returns>An instance of HttpClient.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.GetHttpClient(System.Net.Http.HttpClient)">
+            <summary>
+            Retrieves an instance of HttpClient.
+            </summary>
+            <returns>An instance of HttpClient.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.GetHttpClient(System.IServiceProvider)">
+            <summary>
+            Retrieves an instance of HttpClient.
+            </summary>
+            <returns>An instance of HttpClient.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.GetHttpClient(System.Net.Http.HttpClient,System.IServiceProvider)">
+            <summary>
+            Retrieves an instance of HttpClient.
+            </summary>
+            <returns>An instance of HttpClient.</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler">
+            <summary>
+            Represents a singleton implementation of <see cref="T:System.Net.Http.HttpClientHandler"/> that is not disposable.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler.#ctor">
+            <summary>
+            Private constructor to prevent direct instantiation of the class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler.Instance">
+            <summary>
+            Gets the singleton instance of <see cref="T:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler.Dispose(System.Boolean)">
+            <summary>
+            Disposes the underlying resources held by the <see cref="T:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler"/>.
+            This implementation does nothing to prevent unintended disposal, as it may affect all references.
+            </summary>
+            <param name="disposing">True if called from <see cref="M:Microsoft.SemanticKernel.Http.HttpClientProvider.NonDisposableHttpClientHandler.Dispose(System.Boolean)"/>, false if called from a finalizer.</param>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Http.HttpContentExtensions">
+            <summary>
+            Provides extension methods for working with HTTP content in a way that translates HttpRequestExceptions into HttpOperationExceptions.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpContentExtensions.ReadAsStringWithExceptionMappingAsync(System.Net.Http.HttpContent)">
+            <summary>
+            Reads the content of the HTTP response as a string and translates any HttpRequestException into an HttpOperationException.
+            </summary>
+            <param name="httpContent">The HTTP content to read.</param>
+            <returns>A string representation of the HTTP content.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpContentExtensions.ReadAsStreamAndTranslateExceptionAsync(System.Net.Http.HttpContent)">
+            <summary>
+            Reads the content of the HTTP response as a stream and translates any HttpRequestException into an HttpOperationException.
+            </summary>
+            <param name="httpContent">The HTTP content to read.</param>
+            <returns>A stream representing the HTTP content.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.Http.HttpContentExtensions.ReadAsByteArrayAndTranslateExceptionAsync(System.Net.Http.HttpContent)">
+            <summary>
+            Reads the content of the HTTP response as a byte array and translates any HttpRequestException into an HttpOperationException.
+            </summary>
+            <param name="httpContent">The HTTP content to read.</param>
+            <returns>A byte array representing the HTTP content.</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Http.HttpHeaderValues">
+            <summary>Provides HTTP header values for common purposes.</summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Http.HttpHeaderValues.UserAgent">
+            <summary>User agent string to use for all HTTP requests issued by Semantic Kernel.</summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Http.HttpResponseStream">
+            <summary>
+            Associate a response stream with its parent response for parity in life-cycle management.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.InternalTypeConverter">
+            <summary>
+            Provides internal utility methods for converting types to strings with consideration for CultureInfo.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.InternalTypeConverter.ConvertToString(System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts the given object value to a string representation using the appropriate CultureInfo.
+            </summary>
+            <param name="value">The object to convert.</param>
+            <param name="culture">The CultureInfo to consider during conversion.</param>
+            <returns>A string representation of the object value, considering the specified CultureInfo.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.InternalTypeConverter.GetTypeToStringConverterDelegate(System.Type)">
+            <summary>
+            Retrieves a type-to-string converter delegate for the specified source type.
+            </summary>
+            <param name="sourceType">The source Type for which to retrieve the type-to-string converter delegate.</param>
+            <returns>A Func delegate for converting the source type to a string, considering CultureInfo, or null if no suitable converter is found.</returns>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.InternalTypeConverter.s_converters">
+            <summary>Converter functions for converting types to strings.</summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.NonNullCollection`1">
+            <summary>
+            Provides a collection of non-null items.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.NonNullCollection`1._items">
+            <summary>
+            The underlying list of items.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SemanticKernel.NonNullCollection`1"/> class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SemanticKernel.NonNullCollection`1"/> class.
+            </summary>
+            <param name="items">The initial collection of items to populate this collection.</param>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.NonNullCollection`1.Item(System.Int32)">
+            <summary>
+            Gets or sets the item at the specified index in the collection.
+            </summary>
+            <param name="index">The index of the item to get or set.</param>
+            <returns>The item at the specified index.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is null.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">The <paramref name="index"/> was not valid for this collection.</exception>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.NonNullCollection`1.Count">
+            <summary>
+            Gets the number of items in the collection.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.Add(`0)">
+            <summary>
+            Adds an item to the collection.
+            </summary>
+            <param name="item">The item to add.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is null.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.Clear">
+            <summary>
+            Removes all items from the collection.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.Contains(`0)">
+            <summary>
+            Determines whether an item is in the collection.
+            </summary>
+            <param name="item">The item to locate.</param>
+            <returns>True if the item is found in the collection; otherwise, false.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is null.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.CopyTo(`0[],System.Int32)">
+            <summary>
+            Copies all of the items in the collection to an array, starting at the specified destination array index.
+            </summary>
+            <param name="array">The destination array into which the items should be copied.</param>
+            <param name="arrayIndex">The zero-based index into <paramref name="array"/> at which copying should begin.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="array"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">The number of items in the collection is greater than the available space from <paramref name="arrayIndex"/> to the end of <paramref name="array"/>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than 0.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.IndexOf(`0)">
+            <summary>
+            Searches for the specified item and returns the index of the first occurrence.
+            </summary>
+            <param name="item">The item to locate.</param>
+            <returns>The index of the first found occurrence of the specified item; -1 if the item could not be found.</returns>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.Insert(System.Int32,`0)">
+            <summary>
+            Inserts an item into the collection at the specified index.
+            </summary>
+            <param name="index">The index at which the item should be inserted.</param>
+            <param name="item">The item to insert.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is null.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.Remove(`0)">
+            <summary>
+            Removes the first occurrence of the specified item from the collection.
+            </summary>
+            <param name="item">The item to remove from the collection.</param>
+            <returns>True if the item was successfully removed; false if it wasn't located in the collection.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is null.</exception>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.NonNullCollection`1.RemoveAt(System.Int32)">
+            <summary>
+            Removes the item at the specified index from the collection.
+            </summary>
+            <param name="index">The index of the item to remove.</param>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.TypeConverterFactory">
+            <summary>
+            Factory for creating TypeConverter instances based on a provided type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SemanticKernel.TypeConverterFactory.GetTypeConverter(System.Type)">
+            <summary>
+            Returns a TypeConverter instance for the specified type.
+            </summary>
+            <param name="type">The Type of the object to convert.</param>
+            <returns>A TypeConverter instance if a suitable converter is found, otherwise null.</returns>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Text.JsonOptionsCache">
+            <summary>Caches common configurations of <see cref="T:System.Text.Json.JsonSerializerOptions"/>.</summary>\
+            <remarks>
+            All of the instances include a converter for <see cref="T:System.ReadOnlyMemory`1"/>.
+            Once the System.Text.Json package is upgraded to 8.0+, this will no longer be
+            necessary and the actual default can be used.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Text.JsonOptionsCache.ReadOnlyMemoryConverter">
+            <summary>Singleton for <see cref="P:Microsoft.SemanticKernel.Text.JsonOptionsCache.ReadOnlyMemoryConverter"/>.</summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Text.JsonOptionsCache.Default">
+            <summary>
+            Cached <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance for reading and writing JSON using the default settings.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Text.JsonOptionsCache.WriteIndented">
+            <summary>
+            Cached <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance for writing JSON with indentation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SemanticKernel.Text.JsonOptionsCache.ReadPermissive">
+            <summary>
+            Cached <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance for reading JSON in a permissive way,
+            including support for trailing commas, case-insensitive property names, and comments.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SemanticKernel.Text.ReadOnlyMemoryConverter">
+            <summary>Provides a converter for <see cref="T:System.ReadOnlyMemory`1"/>.</summary>
+        </member>
+        <member name="F:Microsoft.SemanticKernel.Text.ReadOnlyMemoryConverter.s_arrayConverter">
+            <summary>An instance of a converter for float[] that all operations delegate to.</summary>
+        </member>
+        <member name="T:System.Runtime.CompilerServices.IsExternalInit">
+            <summary>
+            Reserved to be used by the compiler for tracking metadata.
+            This class should not be used by developers in source code.
+            </summary>
+        </member>
+        <member name="T:System.ExceptionExtensions">
+            <summary>
+            Exception extension methods.
+            </summary>
+        </member>
+        <member name="M:System.ExceptionExtensions.IsCriticalException(System.Exception)">
+            <summary>
+            Check if an exception is of a type that should not be caught by the kernel.
+            </summary>
+            <param name="ex">Exception.</param>
+            <returns>True if <paramref name="ex"/> is a critical exception and should not be caught.</returns>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.ExperimentalAttribute">
+            <summary>
+             Indicates that an API is experimental and it may change in the future.
+            </summary>
+            <remarks>
+              This attribute allows call sites to be flagged with a diagnostic that indicates that an experimental
+              feature is used. Authors can use this attribute to ship preview features in their assemblies.
+            </remarks>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.ExperimentalAttribute.#ctor(System.String)">
+            <summary>
+             Initializes a new instance of the <see cref="T:System.Diagnostics.CodeAnalysis.ExperimentalAttribute"/> class, specifying the ID that the compiler will use
+             when reporting a use of the API the attribute applies to.
+            </summary>
+            <param name="diagnosticId">The ID that the compiler will use when reporting a use of the API the attribute applies to.</param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.ExperimentalAttribute.DiagnosticId">
+            <summary>
+             Gets the ID that the compiler will use when reporting a use of the API the attribute applies to.
+            </summary>
+            <value>The unique diagnostic ID.</value>
+            <remarks>
+             The diagnostic ID is shown in build output for warnings and errors.
+             <para>This property represents the unique ID that can be used to suppress the warnings or errors, if needed.</para>
+            </remarks>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.ExperimentalAttribute.UrlFormat">
+            <summary>
+             Gets or sets the URL for corresponding documentation.
+             The API accepts a format string instead of an actual URL, creating a generic URL that includes the diagnostic ID.
+            </summary>
+            <value>The format string that represents a URL to corresponding documentation.</value>
+            <remarks>An example format string is <c>https://contoso.com/obsoletion-warnings/{0}</c>.</remarks>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.AllowNullAttribute">
+            <summary>Specifies that null is allowed as an input even if the corresponding type disallows it.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.DisallowNullAttribute">
+            <summary>Specifies that null is disallowed as an input even if the corresponding type allows it.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.MaybeNullAttribute">
+            <summary>Specifies that an output may be null even if the corresponding type disallows it.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.NotNullAttribute">
+            <summary>Specifies that an output will not be null even if the corresponding type allows it.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute">
+            <summary>Specifies that when a method returns <see cref="P:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute.ReturnValue"/>, the parameter may be null even if the corresponding type disallows it.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute.#ctor(System.Boolean)">
+            <summary>Initializes the attribute with the specified return value condition.</summary>
+            <param name="returnValue">
+            The return value condition. If the method returns this value, the associated parameter may be null.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute.ReturnValue">
+            <summary>Gets the return value condition.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute">
+            <summary>Specifies that when a method returns <see cref="P:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute.ReturnValue"/>, the parameter will not be null even if the corresponding type allows it.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute.#ctor(System.Boolean)">
+            <summary>Initializes the attribute with the specified return value condition.</summary>
+            <param name="returnValue">
+            The return value condition. If the method returns this value, the associated parameter will not be null.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute.ReturnValue">
+            <summary>Gets the return value condition.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute">
+            <summary>Specifies that the output will be non-null if the named parameter is non-null.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute.#ctor(System.String)">
+            <summary>Initializes the attribute with the associated parameter name.</summary>
+            <param name="parameterName">
+            The associated parameter name.  The output will be non-null if the argument to the parameter specified is non-null.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute.ParameterName">
+            <summary>Gets the associated parameter name.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute">
+            <summary>Applied to a method that will never return under any circumstance.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.DoesNotReturnIfAttribute">
+            <summary>Specifies that the method will not return if the associated Boolean parameter is passed the specified value.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.DoesNotReturnIfAttribute.#ctor(System.Boolean)">
+            <summary>Initializes the attribute with the specified parameter value.</summary>
+            <param name="parameterValue">
+            The condition parameter value. Code after the method will be considered unreachable by diagnostics if the argument to
+            the associated parameter matches this value.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.DoesNotReturnIfAttribute.ParameterValue">
+            <summary>Gets the condition parameter value.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.MemberNotNullAttribute">
+            <summary>Specifies that the method or property will ensure that the listed field and property members have not-null values.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullAttribute.#ctor(System.String)">
+            <summary>Initializes the attribute with a field or property member.</summary>
+            <param name="member">
+            The field or property member that is promised to be not-null.
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullAttribute.#ctor(System.String[])">
+            <summary>Initializes the attribute with the list of field and property members.</summary>
+            <param name="members">
+            The list of field and property members that are promised to be not-null.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.MemberNotNullAttribute.Members">
+            <summary>Gets field or property member names.</summary>
+        </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute">
+            <summary>Specifies that the method or property will ensure that the listed field and property members have not-null values when returning with the specified return value condition.</summary>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.#ctor(System.Boolean,System.String)">
+            <summary>Initializes the attribute with the specified return value condition and a field or property member.</summary>
+            <param name="returnValue">
+            The return value condition. If the method returns this value, the associated parameter will not be null.
+            </param>
+            <param name="member">
+            The field or property member that is promised to be not-null.
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.#ctor(System.Boolean,System.String[])">
+            <summary>Initializes the attribute with the specified return value condition and list of field and property members.</summary>
+            <param name="returnValue">
+            The return value condition. If the method returns this value, the associated parameter will not be null.
+            </param>
+            <param name="members">
+            The list of field and property members that are promised to be not-null.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.ReturnValue">
+            <summary>Gets the return value condition.</summary>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.Members">
+            <summary>Gets field or property member names.</summary>
+        </member>
+        <member name="M:System.Linq.AsyncEnumerable.AnyAsync``1(System.Collections.Generic.IAsyncEnumerable{``0},System.Func{``0,System.Boolean},System.Threading.CancellationToken)">
+            <summary>
+            Determines whether any element of an async-enumerable sequence satisfies a condition.
+            </summary>
+            <typeparam name="TSource">The type of the elements in the source sequence.</typeparam>
+            <param name="source">An async-enumerable sequence whose elements to apply the predicate to.</param>
+            <param name="predicate">A function to test each element for a condition.</param>
+            <param name="cancellationToken">The optional cancellation token to be used for cancelling the sequence at any time.</param>
+            <returns>An async-enumerable sequence containing a single element determining whether any elements in the source sequence pass the test in the specified predicate.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="source"/> or <paramref name="predicate"/> is null.</exception>
+            <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        </member>
+        <member name="M:System.EnvExtensions.GetBoolEnvVar(System.String)">
+            <summary>
+            Source: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/core/Azure.Core/src/DiagnosticsOptions.cs
+            Values: https://learn.microsoft.com/en-us/dotnet/api/azure.core.diagnosticsoptions.istelemetryenabled?view=azure-dotnet
+            </summary>
+        </member>
+        <member name="T:System.TypeExtensions">
+            <summary>
+            Extensions methods for <see cref="T:System.Type"/>.
+            </summary>
+        </member>
+        <member name="M:System.TypeExtensions.TryGetGenericResultType(System.Type,System.Type@)">
+            <summary>
+            Tries to get the result type from a generic parameter.
+            </summary>
+            <param name="returnType">Return type.</param>
+            <param name="resultType">The result type of the Nullable generic parameter.</param>
+            <returns><c>true</c> if the result type was successfully retrieved; otherwise, <c>false</c>.</returns>
+            TODO [@teresaqhoang]: Issue #4202 Cache Generic Types Extraction - Handlebars
+        </member>
+        <member name="M:System.TypeExtensions.GetFriendlyTypeName(System.Type)">
+            <summary>
+            Returns a string with the type's name. If the type is generic, it also includes the type parameters in a readable format.
+            </summary>
+            <param name="type">Target type.</param>
+        </member>
+    </members>
+</doc>
