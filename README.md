@@ -1,2 +1,2 @@
-# LearnSK
-Learn Semantic Kernel
+# Learn Semantic Kernel
+Implement and learn Semantic Kernel in Unity
